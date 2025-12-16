@@ -1,65 +1,133 @@
-import Image from "next/image";
+"use client"
+
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Stack,
+  TextField
+} from "@mui/material"
+import StarIcon from "@mui/icons-material/Star"
+
+const categories = ["Beach", "Mountains", "Cities", "Camping", "Luxury"]
+
+const listings = Array.from({ length: 8 })
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Box maxWidth="xl" mx="auto" px={3}>
+
+      {/* HERO SECTION */}
+      <Box textAlign="center" py={8}>
+        <Typography variant="h3" fontWeight={700} gutterBottom>
+          Find your next stay
+        </Typography>
+
+        <Typography color="text.secondary" maxWidth={600} mx="auto" mb={4}>
+          Discover unique homes, experiences, and places around the world.
+        </Typography>
+
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          justifyContent="center"
+        >
+          <TextField
+            size="small"
+            placeholder="Search destinations"
+            sx={{ width: 280 }}
+          />
+          <Button variant="contained" size="large">
+            Search
+          </Button>
+        </Stack>
+      </Box>
+
+      {/* CATEGORIES */}
+      <Stack
+        direction="row"
+        spacing={3}
+        py={3}
+        sx={{
+          overflowX: "auto",
+          borderBottom: "1px solid #eee"
+        }}
+      >
+        {categories.map(cat => (
+          <Typography
+            key={cat}
+            fontWeight={500}
+            sx={{
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              color: "text.secondary",
+              "&:hover": { color: "black" }
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            {cat}
+          </Typography>
+        ))}
+      </Stack>
+
+      {/* LISTINGS GRID */}
+      <Box
+        py={6}
+        display="grid"
+        gridTemplateColumns={{
+          xs: "1fr",
+          sm: "repeat(2, 1fr)",
+          md: "repeat(3, 1fr)",
+          lg: "repeat(4, 1fr)"
+        }}
+        gap={4}
+      >
+        {listings.map((_, index) => (
+          <Card
+            key={index}
+            sx={{
+              borderRadius: 3,
+              cursor: "pointer",
+              transition: "0.2s",
+              "&:hover": { boxShadow: 6 }
+            }}
+          >
+            <CardMedia
+              component="img"
+              height="220"
+              image={`https://picsum.photos/id/${index}/200/300`}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+
+            <CardContent>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontWeight={600}>
+                  Goa, India
+                </Typography>
+
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <StarIcon fontSize="small" />
+                  <Typography variant="body2">4.8</Typography>
+                </Stack>
+              </Stack>
+
+              <Typography variant="body2" color="text.secondary">
+                2–7 Apr
+              </Typography>
+
+              <Typography fontWeight={600} mt={1}>
+                ₹5,000 night
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+
+    </Box>
+  )
 }
