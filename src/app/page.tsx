@@ -8,14 +8,15 @@ import {
   CardContent,
   CardMedia,
   Stack,
-  TextField
+  TextField,
+  IconButton
 } from "@mui/material"
 import StarIcon from "@mui/icons-material/Star"
-import { IconButton } from "@mui/material"
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"
+import FavoriteIcon from "@mui/icons-material/Favorite"
 import { useState } from "react"
-
 
 const categories = ["Beach", "Mountains", "Cities", "Camping", "Luxury"]
 
@@ -26,19 +27,27 @@ const listings = Array.from({ length: 8 }).map((_, i) => ({
   price: "₹5,000 night",
   rating: 4.8,
   images: [
-    `https://picsum.photos/id/${i+5}/200/300`,
-    `https://picsum.photos/id/${i+10}/200/300`,
-    `https://picsum.photos/id/${i+10}/200/300`,
-    `https://picsum.photos/id/${i+10}/200/300`
+    `https://picsum.photos/600/400?random=${i * 3 + 1}`,
+    `https://picsum.photos/600/400?random=${i * 3 + 2}`,
+    `https://picsum.photos/600/400?random=${i * 3 + 3}`
   ]
 }))
 
-
 export default function Home() {
+  const [favorites, setFavorites] = useState<number[]>([])
+
+  const toggleFavorite = (id: number) => {
+    setFavorites(prev =>
+      prev.includes(id)
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    )
+  }
+
   return (
     <Box maxWidth="xl" mx="auto" px={3}>
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <Box textAlign="center" py={8}>
         <Typography variant="h3" fontWeight={700} gutterBottom>
           Find your next stay
@@ -90,7 +99,7 @@ export default function Home() {
         ))}
       </Stack>
 
-      {/* LISTINGS GRID */}
+      {/* LISTINGS */}
       <Box
         py={6}
         display="grid"
@@ -102,7 +111,33 @@ export default function Home() {
         }}
         gap={4}
       >
-       {listings.map((listing) => {
+        {listings.map(listing => (
+          <ListingCard
+            key={listing.id}
+            listing={listing}
+            isFavorite={favorites.includes(listing.id)}
+            onToggleFavorite={() => toggleFavorite(listing.id)}
+          />
+        ))}
+      </Box>
+
+    </Box>
+  )
+}
+
+/* ----------------------------- */
+/* LISTING CARD COMPONENT */
+/* ----------------------------- */
+
+function ListingCard({
+  listing,
+  isFavorite,
+  onToggleFavorite
+}: {
+  listing: typeof listings[number]
+  isFavorite: boolean
+  onToggleFavorite: () => void
+}) {
   const [index, setIndex] = useState(0)
 
   const prev = () =>
@@ -113,51 +148,74 @@ export default function Home() {
 
   return (
     <Card
-      key={listing.id}
       sx={{
         borderRadius: 3,
         cursor: "pointer",
-        position: "relative",
         "&:hover .nav": { opacity: 1 }
       }}
     >
-      {/* IMAGE */}
+      {/* IMAGE + HEART */}
       <Box position="relative">
         <CardMedia
           component="img"
           height="220"
           image={listing.images[index]}
+          sx={{ objectFit: "cover" }}
         />
 
-        {/* LEFT */}
+        {/* HEART ICON */}
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleFavorite()
+          }}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            bgcolor: "rgba(255,255,255,0.9)"
+          }}
+        >
+          {isFavorite ? (
+            <FavoriteIcon sx={{ color: "#FF385C" }} />
+          ) : (
+            <FavoriteBorderIcon />
+          )}
+        </IconButton>
+
+        {/* LEFT ARROW */}
         <IconButton
           className="nav"
-          onClick={prev}
+          onClick={(e) => {
+            e.stopPropagation()
+            prev()
+          }}
           sx={{
             position: "absolute",
             top: "50%",
             left: 8,
             transform: "translateY(-50%)",
             bgcolor: "white",
-            opacity: 0,
-            transition: "0.2s"
+            opacity: 0
           }}
         >
           <ArrowBackIosNewIcon fontSize="small" />
         </IconButton>
 
-        {/* RIGHT */}
+        {/* RIGHT ARROW */}
         <IconButton
           className="nav"
-          onClick={next}
+          onClick={(e) => {
+            e.stopPropagation()
+            next()
+          }}
           sx={{
             position: "absolute",
             top: "50%",
             right: 8,
             transform: "translateY(-50%)",
             bgcolor: "white",
-            opacity: 0,
-            transition: "0.2s"
+            opacity: 0
           }}
         >
           <ArrowForwardIosIcon fontSize="small" />
@@ -167,10 +225,15 @@ export default function Home() {
       {/* CONTENT */}
       <CardContent>
         <Stack direction="row" justifyContent="space-between">
-          <Typography fontWeight={600}>{listing.location}</Typography>
+          <Typography fontWeight={600}>
+            {listing.location}
+          </Typography>
+
           <Stack direction="row" spacing={0.5} alignItems="center">
             <StarIcon fontSize="small" />
-            <Typography variant="body2">{listing.rating}</Typography>
+            <Typography variant="body2">
+              {listing.rating}
+            </Typography>
           </Stack>
         </Stack>
 
@@ -183,11 +246,5 @@ export default function Home() {
         </Typography>
       </CardContent>
     </Card>
-  )
-})}
-
-      </Box>
-
-    </Box>
   )
 }
