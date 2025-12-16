@@ -11,10 +11,28 @@ import {
   TextField
 } from "@mui/material"
 import StarIcon from "@mui/icons-material/Star"
+import { IconButton } from "@mui/material"
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
+import { useState } from "react"
+
 
 const categories = ["Beach", "Mountains", "Cities", "Camping", "Luxury"]
 
-const listings = Array.from({ length: 8 })
+const listings = Array.from({ length: 8 }).map((_, i) => ({
+  id: i,
+  location: "Goa, India",
+  date: "2–7 Apr",
+  price: "₹5,000 night",
+  rating: 4.8,
+  images: [
+    `https://picsum.photos/id/${i+5}/200/300`,
+    `https://picsum.photos/id/${i+10}/200/300`,
+    `https://picsum.photos/id/${i+10}/200/300`,
+    `https://picsum.photos/id/${i+10}/200/300`
+  ]
+}))
+
 
 export default function Home() {
   return (
@@ -84,48 +102,90 @@ export default function Home() {
         }}
         gap={4}
       >
-        {listings.map((_, index) => (
-          <Card
-            key={index}
-            sx={{
-              borderRadius: 3,
-              cursor: "pointer",
-              transition: "0.2s",
-              "&:hover": { boxShadow: 6 }
-            }}
-          >
-            <CardMedia
-              component="img"
-              height="220"
-              image={`https://picsum.photos/id/${index}/200/300`}
-            />
+       {listings.map((listing) => {
+  const [index, setIndex] = useState(0)
 
-            <CardContent>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography fontWeight={600}>
-                  Goa, India
-                </Typography>
+  const prev = () =>
+    setIndex(i => (i === 0 ? listing.images.length - 1 : i - 1))
 
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <StarIcon fontSize="small" />
-                  <Typography variant="body2">4.8</Typography>
-                </Stack>
-              </Stack>
+  const next = () =>
+    setIndex(i => (i === listing.images.length - 1 ? 0 : i + 1))
 
-              <Typography variant="body2" color="text.secondary">
-                2–7 Apr
-              </Typography>
+  return (
+    <Card
+      key={listing.id}
+      sx={{
+        borderRadius: 3,
+        cursor: "pointer",
+        position: "relative",
+        "&:hover .nav": { opacity: 1 }
+      }}
+    >
+      {/* IMAGE */}
+      <Box position="relative">
+        <CardMedia
+          component="img"
+          height="220"
+          image={listing.images[index]}
+        />
 
-              <Typography fontWeight={600} mt={1}>
-                ₹5,000 night
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
+        {/* LEFT */}
+        <IconButton
+          className="nav"
+          onClick={prev}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 8,
+            transform: "translateY(-50%)",
+            bgcolor: "white",
+            opacity: 0,
+            transition: "0.2s"
+          }}
+        >
+          <ArrowBackIosNewIcon fontSize="small" />
+        </IconButton>
+
+        {/* RIGHT */}
+        <IconButton
+          className="nav"
+          onClick={next}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 8,
+            transform: "translateY(-50%)",
+            bgcolor: "white",
+            opacity: 0,
+            transition: "0.2s"
+          }}
+        >
+          <ArrowForwardIosIcon fontSize="small" />
+        </IconButton>
+      </Box>
+
+      {/* CONTENT */}
+      <CardContent>
+        <Stack direction="row" justifyContent="space-between">
+          <Typography fontWeight={600}>{listing.location}</Typography>
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <StarIcon fontSize="small" />
+            <Typography variant="body2">{listing.rating}</Typography>
+          </Stack>
+        </Stack>
+
+        <Typography variant="body2" color="text.secondary">
+          {listing.date}
+        </Typography>
+
+        <Typography fontWeight={600} mt={1}>
+          {listing.price}
+        </Typography>
+      </CardContent>
+    </Card>
+  )
+})}
+
       </Box>
 
     </Box>
