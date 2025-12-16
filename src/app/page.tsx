@@ -16,7 +16,9 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"
 import FavoriteIcon from "@mui/icons-material/Favorite"
-import { useState } from "react"
+import { useState } from "react";
+import { useRouter } from "next/navigation"
+
 
 const categories = ["Beach", "Mountains", "Cities", "Camping", "Luxury"]
 
@@ -138,7 +140,8 @@ function ListingCard({
   isFavorite: boolean
   onToggleFavorite: () => void
 }) {
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
+  const router = useRouter();
 
   const prev = () =>
     setIndex(i => (i === 0 ? listing.images.length - 1 : i - 1))
@@ -148,6 +151,7 @@ function ListingCard({
 
   return (
     <Card
+    onClick={() => router.push(`/listing/${listing.id}`)}
       sx={{
         borderRadius: 3,
         cursor: "pointer",
